@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // The base URL for your backend server
-const API_URL = 'http://localhost:5000/api';
+const API_URL = 'https://platinum-pearl.onrender.com/';
 
 const apiService = axios.create({
   baseURL: API_URL,
