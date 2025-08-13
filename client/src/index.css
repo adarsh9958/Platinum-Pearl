@@ -1,0 +1,467 @@
+a {
+  color: inherit; /* This makes the link's color the same as the text around it */
+  text-decoration: none; /* This removes the underline */
+}
+
+/* ==========================================================================
+   1. THEME VARIABLES
+   ========================================================================== */
+:root {
+  --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  --bg-color: #f4f7f9;
+  --text-color: #212529;
+  --primary-color: #007bff;
+  --primary-text-color: #ffffff;
+  --success-color: #28a745;
+  --danger-color: #dc3545;
+  --card-bg: #ffffff;
+  --card-border: #e0e0e0;
+  --input-bg: #ffffff;
+  --input-border: #ced4da;
+  --navbar-bg: rgba(255, 255, 255, 0.85);
+  --navbar-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  --backdrop-blur: 10px;
+}
+
+[data-theme='dark'] {
+  --bg-color: #121212;
+  --text-color: #e0e0e0;
+  --primary-color: #3793ff;
+  --success-color: #34c759;
+  --danger-color: #ff453a;
+  --card-bg: #1e1e1e;
+  --card-border: #383838;
+  --input-bg: #2c2c2c;
+  --input-border: #444444;
+  --navbar-bg: rgba(30, 30, 30, 0.85);
+  --navbar-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+/* ==========================================================================
+   2. GLOBAL STYLES (Applies Everywhere)
+   ========================================================================== */
+body {
+  margin: 0;
+  font-family: var(--font-family);
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* This is the key: Headings inherit their color from their parent. */
+h1, h2, h3, h4, h5, h6 {
+  color: inherit;
+  text-align: center;
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.container {
+  max-width: 800px;
+  margin: auto;
+  padding: 20px;
+}
+
+.main-content {
+  padding-top: 70px; /* Space for fixed navbar */
+}
+
+
+/* ==========================================================================
+   3. COMPONENT STYLES (Navbar, Cards, Forms, etc.)
+   ========================================================================== */
+
+/* --- Main Navbar Styling --- */
+.navbar {
+  background-color: var(--navbar-bg);
+  backdrop-filter: blur(var(--backdrop-blur));
+  -webkit-backdrop-filter: blur(var(--backdrop-blur));
+  box-shadow: var(--navbar-shadow);
+  height: 60px;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  box-sizing: border-box;
+}
+
+.navbar-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 1200px;
+}
+
+.navbar-brand {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--primary-color);
+  text-decoration: none;
+}
+
+/* --- Desktop Links Styling --- */
+.navbar-links-desktop {
+  display: flex; /* This correctly aligns the links */
+  align-items: center;
+  gap: 25px; /* This adds space between the links */
+}
+
+.nav-link {
+  color: var(--text-color);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.nav-link:hover {
+  color: var(--primary-color);
+}
+
+.btn-logout {
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  padding: 0;
+  font-family: var(--font-family);
+  font-size: 1rem;
+}
+
+/* --- Mobile Icons (Hidden on Desktop) --- */
+.navbar-icons-mobile {
+  display: none;
+}
+
+.theme-toggle-btn {
+  /* Positioning */
+  position: fixed; /* Keep it fixed relative to the viewport */
+  top: 12px;       /* Distance from the top */
+  right: 20px;     /* Distance from the right */
+  z-index: 1001;   /* Ensure it's on top of other navbar elements */
+  
+  /* Styling */
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  font-size: 1.5rem;
+  color: var(--text-color);
+}
+.card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 25px 30px;
+  margin-bottom: 25px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+}
+.form-group { margin-bottom: 15px; }
+.form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+input[type="text"], input[type="email"], input[type="password"], input[type="date"], select {
+  width: 100%;
+  padding: 12px;
+  border-radius: 5px;
+  border: 1px solid var(--input-border);
+  background-color: var(--input-bg);
+  color: var(--text-color);
+  box-sizing: border-box;
+  font-size: 1rem;
+}
+.btn {
+  padding: 12px 18px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 1rem;
+  transition: opacity 0.2s ease;
+}
+/* And add this new class right below it */
+.btn-full-width {
+  width: 100%;
+}
+.btn:hover { opacity: 0.85; }
+.btn-primary { background-color: var(--primary-color); color: var(--primary-text-color); }
+.btn-success { background-color: var(--success-color); color: var(--primary-text-color); }
+.btn-danger { background-color: var(--danger-color); color: var(--primary-text-color); }
+.room-list { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+.room-item { border: 1px solid var(--success-color); background-color: var(--card-bg); padding: 10px; border-radius: 5px; }
+.message { text-align: center; padding: 10px; margin-top: 15px; border-radius: 5px; }
+.message-success { background-color: #d4edda; color: #155724; }
+.message-error { background-color: #f8d7da; color: #721c24; }
+[data-theme='dark'] .message-success { background-color: #1c4b2a; color: #a3e9b6; }
+[data-theme='dark'] .message-error { background-color: #58151c; color: #f7baba; }
+
+/* ==========================================================================
+   4. PAGE-SPECIFIC STYLES (The Homepage Fix)
+   ========================================================================== */
+
+/* This wrapper applies the background and forces text directly inside it to be WHITE */
+.home-page-wrapper {
+  color: #ffffff; /* Sets default text color for elements directly on the background */
+  min-height: calc(100vh - 60px);
+  background-image: linear-gradient(rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.55)), url('https://images.unsplash.com/photo-1566073771259-6a8506099945?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1MDcxMzJ8MHwxfGFsbHx8fHx8fHx8fDE3MjMzNjA2Mjd8&ixlib=rb-4.0.3&q=80&w=1080');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  padding: 20px 0;
+}
+
+/* This targets the H1 title directly inside the wrapper's container */
+.home-page-wrapper > .container > h1 {
+  text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* Cards on the homepage get special treatment */
+.home-page-wrapper .card {
+  color: var(--text-color); /* CRITICAL: Resets card text color to follow the theme */
+  background-color: rgba(255, 255, 255, 0.95); /* Light mode card */
+}
+
+[data-theme='dark'] .home-page-wrapper .card {
+  background-color: rgba(30, 30, 30, 0.95); /* Dark mode card */
+}
+
+
+
+/* === Admin Room Grid Styles === */
+.room-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 15px;
+}
+
+.room-grid-item {
+  border: 2px solid; /* Border color will be set by status class */
+  border-radius: 8px;
+  padding: 10px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  font-weight: bold;
+}
+
+.room-grid-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.room-grid-item .room-number {
+  font-size: 1.2rem;
+  margin-bottom: 5px;
+}
+
+.room-grid-item .room-status {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+/* Color coding for statuses */
+.status-available { background-color: #d4edda; color: #155724; border-color: #58a66c; }
+.status-occupied { background-color: #f8d7da; color: #721c24; border-color: #e5878f; }
+.status-cleaning { background-color: #cce5ff; color: #004085; border-color: #8abeff; }
+.status-maintenance { background-color: #fff3cd; color: #856404; border-color: #ffde7a; }
+
+[data-theme='dark'] .status-available { background-color: #1c4b2a; color: #a3e9b6; border-color: #34c759; }
+[data-theme='dark'] .status-occupied { background-color: #58151c; color: #f7baba; border-color: #ff453a; }
+[data-theme='dark'] .status-cleaning { background-color: #003063; color: #9acaff; border-color: #3793ff; }
+[data-theme='dark'] .status-maintenance { background-color: #664d03; color: #ffda6a; border-color: #ffc107; }
+
+.status-select {
+  margin-top: 10px;
+  width: 100%;
+  padding: 5px;
+  border-radius: 4px;
+  border: 1px solid var(--input-border);
+  background-color: var(--input-bg);
+  color: var(--text-color);
+}
+
+/* === Admin Booking Management Styles === */
+.filters {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+  align-items: center;
+}
+
+.bookings-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.bookings-table th,
+.bookings-table td {
+  border: 1px solid var(--card-border);
+  padding: 12px;
+  text-align: left;
+}
+
+.bookings-table th {
+  background-color: var(--card-bg);
+}
+
+.bookings-table tr:nth-child(even) {
+  background-color: var(--bg-color);
+}
+
+/* === Admin Reporting Styles === */
+.report-controls {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.report-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.stat-card {
+  background-color: var(--card-bg);
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid var(--card-border);
+  text-align: center;
+}
+
+.stat-card h3 {
+  margin-top: 0;
+  color: var(--primary-color);
+}
+
+.stat-card .stat-value {
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+/* === Improved and Corrected Select Dropdown Style === */
+.status-select {
+  /* Reset browser appearance */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  
+  /* Box model */
+  display: block;
+  width: 100%;
+  margin-top: 10px;
+  padding: 8px 30px 8px 12px; /* Add padding for the arrow */
+  
+  /* Font and Colors */
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-color);
+  background-color: var(--input-bg);
+  
+  /* Border */
+  border: 1px solid var(--input-border);
+  border-radius: 5px;
+
+  /* Custom Arrow */
+  background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%236c757d%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22/%3E%3C/svg%3E');
+  background-repeat: no-repeat;
+  background-position: right 10px top 50%;
+  background-size: 10px auto;
+  cursor: pointer;
+}
+
+/* Custom arrow color for dark mode */
+[data-theme='dark'] .status-select {
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23e0e0e0%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22/%3E%3C/svg%3E');
+}
+
+
+/* ==========================================================================
+   5. RESPONSIVE DESIGN (For Mobile Phones)
+   ========================================================================== */
+
+/* This applies to screen sizes 768px wide or smaller */
+@media (max-width: 768px) {
+  
+  /* --- Hide desktop links --- */
+  .navbar-links-desktop {
+    display: none;
+  }
+
+/* Hide desktop links on mobile */
+  .navbar-links-desktop {
+    display: none;
+  }
+
+  /* Show mobile icons on mobile */
+  .navbar-icons-mobile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .hamburger-btn {
+    background: none;
+    border: none;
+    font-size: 1.8rem;
+    cursor: pointer;
+    color: var(--text-color);
+  }
+  .navbar-links-desktop .theme-toggle-btn {
+    display: none; /* Hide the one in the desktop link list */
+  }
+  
+  .navbar-icons-mobile .theme-toggle-btn {
+    position: static; /* Let the mobile one exist normally in the flex layout */
+  }
+
+  /* Mobile Menu Styling (the dropdown) */
+  .mobile-menu {
+    position: fixed;
+    top: 60px;
+    left: 0;
+    width: 100%;
+    background-color: var(--card-bg);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    z-index: 999;
+    padding: 10px 0;
+  }
+  .mobile-menu-link {
+    display: block;
+    color: var(--text-color);
+    text-decoration: none;
+    font-size: 1.2rem;
+    padding: 15px 20px;
+    border-bottom: 1px solid var(--card-border);
+  }
+  .mobile-menu-link.btn-logout {
+    width: 100%;
+    text-align: left;
+  }
+  
+  /* --- General Layout --- */
+  .main-content {
+    padding-top: 70px; /* Ensure content clears the fixed navbar */
+  }
+  .home-page-wrapper > .container > h1 {
+    font-size: 2rem;
+  }
+  .rdp-months {
+    flex-direction: column;
+  }
+  .room-grid {
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 10px;
+  }
+}
