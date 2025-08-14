@@ -1,6 +1,6 @@
 const Room = require('../models/Room');
 const Booking = require('../models/Booking');
-const { zonedTimeToUtc, format } = require('date-fns-tz');
+const { zonedTimeToUtc } = require('date-fns-tz');
 
 
 // GET /api/rooms - Get all rooms (Protected)
@@ -49,12 +49,14 @@ exports.checkAvailability = async (req, res) => {
     }
 
     try {
-        // --- THIS IS THE TIMEZONE FIX ---
-        const timeZone = 'Asia/Kolkata'; 
+        // The incoming date strings from the client are already in a full format that `new Date()` can parse.
+        const start = new Date(startDate);
+        const end = new Date(endDate);
         
-        // Convert the incoming date strings to UTC at the start of that day in the user's timezone
-        const start = zonedTimeToUtc(`${startDate}T00:00:00`, timeZone);
-        const end = zonedTimeToUtc(`${endDate}T00:00:00`, timeZone);
+        // Validate that the dates were parsed correctly
+        if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+            return res.status(400).json({ message: 'Invalid date format. Please provide valid dates.' });
+        }
 
         const conflictingBookings = await Booking.find({
             status: { $ne: 'completed' },

@@ -13,15 +13,17 @@ const Room = require('./models/Room'); // Import Room model for initialization
 const app = express();
 
 // Middleware
-app.use(cors()); // Allows cross-origin requests (from your frontend)
-app.use(express.json()); // Parses incoming JSON requests
 const corsOptions = {
   origin: [
     'http://localhost:5174', 
-    'https://platinum-pearl-client.onrender.com'
+    'https://platinum-pearl-client.onrender.com',
+    'http://localhost:5173'
   ], // Your live frontend URL
   optionsSuccessStatus: 200 
 };
+
+app.use(cors(corsOptions)); // Allows cross-origin requests (from your frontend)
+app.use(express.json()); // Parses incoming JSON requests
 
 
 // Connect to MongoDB
