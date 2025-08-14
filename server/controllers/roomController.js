@@ -42,18 +42,37 @@ exports.getAvailableRooms = async (req, res) => {
 
 // Check room availability for a given date range
 exports.checkAvailability = async (req, res) => {
-    console.log("--- RUNNING SIMPLIFIED AVAILABILITY CHECK ---");
+    const { startDate, endDate } = req.query;
+
+    if (!startDate || !endDate) {
+        return res.status(400).json({ message: 'Please provide both start and end dates.' });
+    }
+
     try {
-        // This is the simplest possible query: just find all rooms that are "available".
-        const allAvailableRooms = await Room.find({ status: 'available' });
+        const timeZone = 'Asia/Kolkata'; 
+        const start = zonedTimeToUtc(`${startDate}T00:00:00`, timeZone);
+        const end = zonedTimeToUtc(`${endDate}T00:00:00`, timeZone);
 
-        console.log(`Found ${allAvailableRooms.length} available rooms in the database.`);
-
-        res.json(allAvailableRooms);
+        // Find bookings that conflict
+        const conflictingBookings = await Booking.find({
+            $or: [ { status: 'upcoming' }, { status: 'checked-in' } ],
+            checkInDate: { $lt: end },
+            expectedCheckOutDate: { $gt: start }
+        });
         
+        const unavailableRoomIds = conflictingBookings.map(booking => booking.room);
+
+        // Find rooms that are NOT unavailable and are NOT under maintenance/cleaning
+        const availableRooms = await Room.find({ 
+            _id: { $nin: unavailableRoomIds },
+            status: 'available' 
+        }).sort({ roomNumber: 'asc' });
+
+        res.json(availableRooms);
+
     } catch (error) {
-        console.error("--- SIMPLIFIED CHECK FAILED ---", error);
-        res.status(500).json({ message: 'Server error during simplified check.' });
+        console.error("Availability Check Error:", error);
+        res.status(500).json({ message: 'Server error checking availability.' });
     }
 };
 
