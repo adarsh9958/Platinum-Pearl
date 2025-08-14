@@ -15,8 +15,9 @@ const bookingSchema = new mongoose.Schema({
   totalBill: { type: Number, default: 0 },
   status: {
     type: String,
-    enum: ['active', 'completed'],
-    default: 'active'
+    // Add 'upcoming' and 'checked-in' and rename 'active'
+    enum: ['upcoming', 'checked-in', 'completed'], 
+    default: 'upcoming',
   },
   uniqueKey: { type: String, required: true, unique: true } // Key for guest check-in/out
 });

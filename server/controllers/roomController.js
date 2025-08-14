@@ -2,42 +2,6 @@ const Room = require('../models/Room');
 const Booking = require('../models/Booking');
 const { zonedTimeToUtc, format } = require('date-fns-tz');
 
-exports.checkAvailability = async (req, res) => {
-    const { startDate, endDate } = req.query;
-
-    if (!startDate || !endDate) {
-        return res.status(400).json({ message: 'Please provide both start and end dates.' });
-    }
-
-    try {
-        // --- THIS IS THE TIMEZONE FIX ---
-        // Assume the user's timezone is India (Asia/Kolkata)
-        const timeZone = 'Asia/Kolkata'; 
-        
-        // Convert the incoming date strings to UTC at the start of that day in the user's timezone
-        const start = zonedTimeToUtc(`${startDate}T00:00:00`, timeZone);
-        const end = zonedTimeToUtc(`${endDate}T00:00:00`, timeZone);
-
-        const conflictingBookings = await Booking.find({
-            status: { $ne: 'completed' },
-            checkInDate: { $lt: end },
-            expectedCheckOutDate: { $gt: start }
-        });
-        
-        const unavailableRoomIds = conflictingBookings.map(booking => booking.room);
-
-        const availableRooms = await Room.find({ 
-            _id: { $nin: unavailableRoomIds },
-            status: 'available'
-        }).sort({ roomNumber: 'asc' });
-
-        res.json(availableRooms);
-
-    } catch (error) {
-        console.error("Availability Check Error:", error);
-        res.status(500).json({ message: 'Server error checking availability.' });
-    }
-};
 
 // GET /api/rooms - Get all rooms (Protected)
 exports.getAllRooms = async (req, res) => {
@@ -77,7 +41,7 @@ exports.getAvailableRooms = async (req, res) => {
 };
 
 // Check room availability for a given date range
-exports.checkAvailability = async (req, res) => {
+export const checkAvailability = async (req, res) => {
     const { startDate, endDate } = req.query;
 
     if (!startDate || !endDate) {
@@ -90,20 +54,23 @@ exports.checkAvailability = async (req, res) => {
         const end = new Date(endDate);
         end.setUTCHours(0, 0, 0, 0);
 
+        // Find bookings that conflict with the selected date range.
         const conflictingBookings = await Booking.find({
-            status: { $ne: 'completed' },
+            $or: [ { status: 'upcoming' }, { status: 'checked-in' } ], // Check against upcoming and current guests
             checkInDate: { $lt: end },
             expectedCheckOutDate: { $gt: start }
         });
         
         const unavailableRoomIds = conflictingBookings.map(booking => booking.room);
 
+        // Find all rooms that are NOT unavailable and are NOT under maintenance/cleaning
         const availableRooms = await Room.find({ 
             _id: { $nin: unavailableRoomIds },
-            status: 'available'
+            status: 'available' 
         }).sort({ roomNumber: 'asc' });
 
         res.json(availableRooms);
+
     } catch (error) {
         console.error("Availability Check Error:", error);
         res.status(500).json({ message: 'Server error checking availability.' });
