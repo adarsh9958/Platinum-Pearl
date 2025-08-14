@@ -4,63 +4,50 @@ const { sendBillEmail, sendWelcomeEmail } = require('../utils/emailService'); //
 const crypto = require('crypto'); // For generating a unique key
 
 // Controller for checking a guest in
-// server/controllers/bookingController.js
-
 exports.checkIn = async (req, res) => {
-    const { guestName, guestEmail, expectedCheckOutDate, roomNumber, checkInDate } = req.body;
-
-    if (!guestName || !guestEmail || !expectedCheckOutDate || !roomNumber || !checkInDate) {
-        return res.status(400).json({ message: 'Missing required booking information.' });
-    }
+    const { guestName, guestEmail, expectedCheckOutDate, roomNumber } = req.body;
 
     try {
-        const room = await Room.findOne({ roomNumber: roomNumber });
-        if (!room) { return res.status(404).json({ message: `Room ${roomNumber} not found.` }); }
-
-        const start = new Date(checkInDate);
-        start.setUTCHours(0, 0, 0, 0);
-        const end = new Date(expectedCheckOutDate);
-        end.setUTCHours(0, 0, 0, 0);
-
-        const conflictingBookings = await Booking.find({
-            room: room._id,
-            $or: [{ status: 'upcoming' }, { status: 'checked-in' }],
-            checkInDate: { $lt: end },
-            expectedCheckOutDate: { $gt: start }
-        });
-        
-        if (conflictingBookings.length > 0) {
-            return res.status(400).json({ message: 'Error: This room is already booked for the selected dates.' });
+        const room = await Room.findOne({ roomNumber: roomNumber, status: 'available' });
+        if (!room) {
+            return res.status(404).json({ message: 'Room is not available or does not exist.' });
         }
-        
+
         const uniqueKey = crypto.randomBytes(16).toString('hex');
         
         const newBooking = new Booking({
             guestName,
             guestEmail,
-            checkInDate: new Date(checkInDate), 
-            expectedCheckOutDate: new Date(expectedCheckOutDate),
+            expectedCheckOutDate,
             room: room._id,
             uniqueKey,
-            status: 'upcoming', // <-- New bookings are 'upcoming'
             charges: [{ item: 'Room Rent', price: 150 }]
         });
         
+        // Save the booking and update the room first
         await newBooking.save();
+        room.status = 'occupied';
+        await room.save();
         
-        
-        const emailWasSent = await sendWelcomeEmail(guestName, guestEmail, uniqueKey);
+        // Then, attempt to send the email
+        const emailWasSent = await sendWelcomeEmail(guestEmail, guestName, uniqueKey);
         
         if (emailWasSent) {
-            res.status(201).json({ message: 'Reservation successful! A confirmation key has been sent.' });
-        } else {
+            // If email succeeds, send a simple success message
             res.status(201).json({ 
-                message: 'Reservation successful, but the email failed. Please provide this key manually.', 
-                uniqueKey: uniqueKey
+                message: 'Guest checked in successfully. A unique key has been sent to their email.', 
+                bookingDetails: newBooking
+            });
+        } else {
+            // If email fails, let the front desk know and provide the key as a fallback
+            res.status(201).json({ 
+                message: 'Guest checked in, but the confirmation email could not be sent. Please provide this key to the guest manually.', 
+                uniqueKey: uniqueKey, // Include the key in the response
+                bookingDetails: newBooking
             });
         }
+
     } catch (error) {
-        console.error(error);
         res.status(500).json({ message: 'Server error during check-in.', error });
     }
 };

@@ -2,8 +2,9 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-require('dotenv').config();
 
+require('dotenv').config();
+ 
 const bookingRoutes = require('./routes/bookingRoutes');
 const roomRoutes = require('./routes/roomRoutes');
 const authRoutes = require('./routes/authRoutes');
@@ -12,13 +13,16 @@ const Room = require('./models/Room'); // Import Room model for initialization
 const app = express();
 
 // Middleware
-const corsOptions = {
-  origin: 'https://platinum-pearl-client.onrender.com/', // Your live frontend URL
-  optionsSuccessStatus: 200 
-};
-app.use(cors(corsOptions));
 app.use(cors()); // Allows cross-origin requests (from your frontend)
 app.use(express.json()); // Parses incoming JSON requests
+const corsOptions = {
+  origin: [
+    'http://localhost:5174', 
+    'https://platinum-pearl-client.onrender.com'
+  ], // Your live frontend URL
+  optionsSuccessStatus: 200 
+};
+
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI)
