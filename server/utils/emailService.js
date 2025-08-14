@@ -1,5 +1,12 @@
 const nodemailer = require('nodemailer');
 
+// Check for essential email environment variables
+if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+  throw new Error(
+    'Email credentials (EMAIL_USER, EMAIL_PASS) are not configured in .env'
+  );
+}
+
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
