@@ -1,7 +1,8 @@
 const Room = require('../models/Room');
 const Booking = require('../models/Booking');
-
 const { zonedTimeToUtc, format } = require('date-fns-tz');
+
+
 // GET /api/rooms - Get all rooms (Protected)
 exports.getAllRooms = async (req, res) => {
     try {
@@ -48,16 +49,13 @@ exports.checkAvailability = async (req, res) => {
     }
 
     try {
-        // Assume the dates are coming from a user in India.
-        // This can be made dynamic in a more advanced system.
+        // --- THIS IS THE TIMEZONE FIX ---
         const timeZone = 'Asia/Kolkata'; 
         
-        // Convert the incoming 'YYYY-MM-DD' strings to full UTC date objects.
-        // This ensures the server always works with a universal standard.
+        // Convert the incoming date strings to UTC at the start of that day in the user's timezone
         const start = zonedTimeToUtc(`${startDate}T00:00:00`, timeZone);
         const end = zonedTimeToUtc(`${endDate}T00:00:00`, timeZone);
 
-        // Find bookings whose time range overlaps with the requested time range
         const conflictingBookings = await Booking.find({
             status: { $ne: 'completed' },
             checkInDate: { $lt: end },
