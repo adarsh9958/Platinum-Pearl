@@ -10,9 +10,9 @@ const transporter = nodemailer.createTransport({
 
 const sendWelcomeEmail = async (to, guestName, uniqueKey) => {
   const mailOptions = {
-    from: `"Your Hotel Name" <${process.env.EMAIL_USER}>`,
+    from: `"✨ Platinum Pearl" <${process.env.EMAIL_USER}>`,
     to: to,
-    subject: 'Welcome to Your Hotel Name! Your Check-in Key',
+    subject: 'Welcome to Platinum Pearl! Your Check-in Key',
     html: `
       <h1>Welcome, ${guestName}!</h1>
       <p>Thank you for choosing to stay with us. You are now checked in.</p>
