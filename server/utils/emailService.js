@@ -34,9 +34,9 @@ const sendWelcomeEmail = async (to, guestName, uniqueKey) => {
 
 const sendBillEmail = async (to, bookingDetails, bill) => {
   const mailOptions = {
-    from: `"Your Hotel Name" <${process.env.EMAIL_USER}>`,
+    from: `"✨ Platinum Pearl" <${process.env.EMAIL_USER}>`,
     to: to,
-    subject: `Your Bill from Your Hotel Name - Room ${bookingDetails.room.roomNumber}`,
+    subject: `Your Bill from ✨ Platinum Pearl - Room ${bookingDetails.room.roomNumber}`,
     html: `
       <h1>Thank you for staying with us, ${bookingDetails.guestName}!</h1>
       <p>Here is your final bill for your stay in room ${bookingDetails.room.roomNumber}.</p>
