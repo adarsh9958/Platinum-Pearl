@@ -12,6 +12,11 @@ const Room = require('./models/Room'); // Import Room model for initialization
 const app = express();
 
 // Middleware
+const corsOptions = {
+  origin: 'https://platinum-pearl-client.onrender.com/', // Your live frontend URL
+  optionsSuccessStatus: 200 
+};
+app.use(cors(corsOptions));
 app.use(cors()); // Allows cross-origin requests (from your frontend)
 app.use(express.json()); // Parses incoming JSON requests
 
