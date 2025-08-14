@@ -6,7 +6,7 @@ const crypto = require('crypto'); // For generating a unique key
 // Controller for checking a guest in
 // server/controllers/bookingController.js
 
-export const checkIn = async (req, res) => {
+exports.checkIn = async (req, res) => {
     const { guestName, guestEmail, expectedCheckOutDate, roomNumber, checkInDate } = req.body;
     
     // All validation remains the same

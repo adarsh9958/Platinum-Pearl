@@ -41,7 +41,7 @@ exports.getAvailableRooms = async (req, res) => {
 };
 
 // Check room availability for a given date range
-export const checkAvailability = async (req, res) => {
+exports.checkAvailability = async (req, res) => {
     const { startDate, endDate } = req.query;
 
     if (!startDate || !endDate) {
