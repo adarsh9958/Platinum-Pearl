@@ -49,23 +49,24 @@ exports.checkAvailability = async (req, res) => {
     }
 
     try {
+        // --- THIS IS THE TIMEZONE FIX ---
         const timeZone = 'Asia/Kolkata'; 
+        
+        // Convert the incoming date strings to UTC at the start of that day in the user's timezone
         const start = zonedTimeToUtc(`${startDate}T00:00:00`, timeZone);
         const end = zonedTimeToUtc(`${endDate}T00:00:00`, timeZone);
 
-        // Find bookings that conflict
         const conflictingBookings = await Booking.find({
-            $or: [ { status: 'upcoming' }, { status: 'checked-in' } ],
+            status: { $ne: 'completed' },
             checkInDate: { $lt: end },
             expectedCheckOutDate: { $gt: start }
         });
         
         const unavailableRoomIds = conflictingBookings.map(booking => booking.room);
 
-        // Find rooms that are NOT unavailable and are NOT under maintenance/cleaning
         const availableRooms = await Room.find({ 
             _id: { $nin: unavailableRoomIds },
-            status: 'available' 
+            status: 'available'
         }).sort({ roomNumber: 'asc' });
 
         res.json(availableRooms);
