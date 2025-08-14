@@ -49,21 +49,20 @@ exports.checkAvailability = async (req, res) => {
     }
 
     try {
-        const start = new Date(startDate);
-        start.setUTCHours(0, 0, 0, 0);
-        const end = new Date(endDate);
-        end.setUTCHours(0, 0, 0, 0);
+        const timeZone = 'Asia/Kolkata'; 
+        const start = zonedTimeToUtc(`${startDate}T00:00:00`, timeZone);
+        const end = zonedTimeToUtc(`${endDate}T00:00:00`, timeZone);
 
-        // Find bookings that conflict with the selected date range.
+        // Find bookings that conflict
         const conflictingBookings = await Booking.find({
-            $or: [ { status: 'upcoming' }, { status: 'checked-in' } ], // Check against upcoming and current guests
+            $or: [ { status: 'upcoming' }, { status: 'checked-in' } ],
             checkInDate: { $lt: end },
             expectedCheckOutDate: { $gt: start }
         });
         
         const unavailableRoomIds = conflictingBookings.map(booking => booking.room);
 
-        // Find all rooms that are NOT unavailable and are NOT under maintenance/cleaning
+        // Find rooms that are NOT unavailable and are NOT under maintenance/cleaning
         const availableRooms = await Room.find({ 
             _id: { $nin: unavailableRoomIds },
             status: 'available' 

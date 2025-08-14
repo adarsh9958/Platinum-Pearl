@@ -8,19 +8,15 @@ const crypto = require('crypto'); // For generating a unique key
 
 exports.checkIn = async (req, res) => {
     const { guestName, guestEmail, expectedCheckOutDate, roomNumber, checkInDate } = req.body;
-    
-    // All validation remains the same
+
     if (!guestName || !guestEmail || !expectedCheckOutDate || !roomNumber || !checkInDate) {
         return res.status(400).json({ message: 'Missing required booking information.' });
     }
 
     try {
         const room = await Room.findOne({ roomNumber: roomNumber });
-        if (!room) {
-            return res.status(404).json({ message: `Room ${roomNumber} not found.` });
-        }
+        if (!room) { return res.status(404).json({ message: `Room ${roomNumber} not found.` }); }
 
-        // The availability check logic is now inside here for final validation
         const start = new Date(checkInDate);
         start.setUTCHours(0, 0, 0, 0);
         const end = new Date(expectedCheckOutDate);
@@ -28,7 +24,7 @@ exports.checkIn = async (req, res) => {
 
         const conflictingBookings = await Booking.find({
             room: room._id,
-            $or: [ { status: 'upcoming' }, { status: 'checked-in' } ],
+            $or: [{ status: 'upcoming' }, { status: 'checked-in' }],
             checkInDate: { $lt: end },
             expectedCheckOutDate: { $gt: start }
         });
@@ -56,7 +52,7 @@ exports.checkIn = async (req, res) => {
         const emailWasSent = await sendWelcomeEmail(guestName, guestEmail, uniqueKey);
         
         if (emailWasSent) {
-            res.status(201).json({ message: 'Reservation successful! A confirmation key has been sent to the guest\'s email.' });
+            res.status(201).json({ message: 'Reservation successful! A confirmation key has been sent.' });
         } else {
             res.status(201).json({ 
                 message: 'Reservation successful, but the email failed. Please provide this key manually.', 
