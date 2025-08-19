@@ -72,8 +72,13 @@ exports.checkOut = async (req, res) => {
             nightsStayed = 1; // Ensure a minimum of 1 night
         }
 
-        // 2. Calculate the room rent with the flat rate
-        const roomRent = nightsStayed * 150; // $150 per day
+        // 2. Calculate the room rent with the new tiered rate
+        let roomRent;
+        if (nightsStayed <= 1) {
+            roomRent = 150;
+        } else {
+            roomRent = 150 + (nightsStayed - 1) * 100;
+        }
 
         // 3. Update the 'Room Rent' charge in the charges array
         const rentChargeIndex = booking.charges.findIndex(charge => charge.item === 'Room Rent');
@@ -91,8 +96,22 @@ exports.checkOut = async (req, res) => {
         booking.checkOutDate = new Date();
         booking.status = 'completed';
         
+        // Group charges for the bill
+        const groupCharges = (charges) => {
+            return charges.reduce((acc, charge) => {
+                const { item, price } = charge;
+                if (!acc[item]) {
+                    acc[item] = { count: 0, price, total: 0 };
+                }
+                acc[item].count++;
+                acc[item].total += price;
+                return acc;
+            }, {});
+        };
+        const groupedCharges = groupCharges(booking.charges);
+
         // Send email with the final bill
-        await sendBillEmail(booking.guestEmail, booking, { charges: booking.charges, total: totalBill });
+        await sendBillEmail(booking.guestEmail, booking, { charges: groupedCharges, total: totalBill });
         
         // Update room status
         const room = await Room.findById(booking.room._id);

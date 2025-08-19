@@ -197,6 +197,12 @@ input[type="text"], input[type="email"], input[type="password"], input[type="dat
 .btn-danger { background-color: var(--danger-color); color: var(--primary-text-color); }
 .room-list { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
 .room-item { border: 1px solid var(--success-color); background-color: var(--card-bg); padding: 10px; border-radius: 5px; }
+.room-item.selected {
+    background-color: var(--primary-color);
+    color: var(--primary-text-color);
+    border-color: var(--primary-color);
+    font-weight: bold;
+}
 .message { text-align: center; padding: 10px; margin-top: 15px; border-radius: 5px; }
 .message-success { background-color: #d4edda; color: #155724; }
 .message-error { background-color: #f8d7da; color: #721c24; }
@@ -463,5 +469,34 @@ input[type="text"], input[type="email"], input[type="password"], input[type="dat
   .room-grid {
     grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
     gap: 10px;
+  }
+
+  .room-list-container {
+    margin: 0 -15px;
+  }
+
+  .room-item-wrapper {
+    padding: 5px;
+  }
+
+  .room-item {
+    text-align: center;
+    cursor: pointer;
+  }
+
+  .room-list-vertical {
+    max-height: 250px;
+    overflow-y: auto;
+    border: 1px solid var(--input-border);
+    border-radius: 5px;
+    padding: 10px;
+  }
+
+  .room-list-vertical .room-item {
+    margin-bottom: 10px;
+  }
+
+  .room-list-vertical .room-item:last-child {
+    margin-bottom: 0;
   }
 }

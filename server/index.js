@@ -4,18 +4,6 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 
 require('dotenv').config();
-
-// Validate essential environment variables
-if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-  console.error(
-    'FATAL ERROR: EMAIL_USER and EMAIL_PASS environment variables are not set.'
-  );
-  console.error(
-    'Please create a .env file in the /server directory and add these variables.'
-  );
-  console.error('EMAIL_PASS should be a Google App Password.');
-  process.exit(1); // Exit the process with an error code
-}
  
 const bookingRoutes = require('./routes/bookingRoutes');
 const roomRoutes = require('./routes/roomRoutes');

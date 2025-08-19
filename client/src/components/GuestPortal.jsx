@@ -68,6 +68,20 @@ const GuestPortal = ({ uniqueKey, onCheckout }) => {
 
   const totalBill = booking.charges.reduce((acc, charge) => acc + charge.price, 0);
 
+  const groupCharges = (charges) => {
+    return charges.reduce((acc, charge) => {
+      const { item, price } = charge;
+      if (!acc[item]) {
+        acc[item] = { count: 0, price, total: 0 };
+      }
+      acc[item].count++;
+      acc[item].total += price;
+      return acc;
+    }, {});
+  };
+
+  const groupedCharges = groupCharges(booking.charges);
+
   return (
     <div>
       <div className="card">
@@ -82,9 +96,11 @@ const GuestPortal = ({ uniqueKey, onCheckout }) => {
         
         <h3>Current Bill ($ {totalBill.toFixed(2)})</h3>
         <ul>
-            {booking.charges.map((charge, index) => (
-            <li key={index}>{charge.item}: ${charge.price.toFixed(2)}</li>
-            ))}
+          {Object.entries(groupedCharges).map(([itemName, data]) => (
+            <li key={itemName}>
+              {itemName} {data.count > 1 && `x ${data.count}`} - ${data.total.toFixed(2)}
+            </li>
+          ))}
         </ul>
         <button onClick={handleCheckout} className="btn btn-danger btn-full-width">
             Check Out & Receive Bill

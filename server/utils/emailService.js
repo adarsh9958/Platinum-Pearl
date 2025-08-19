@@ -1,12 +1,5 @@
 const nodemailer = require('nodemailer');
 
-// Check for essential email environment variables
-if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-  throw new Error(
-    'Email credentials (EMAIL_USER, EMAIL_PASS) are not configured in .env'
-  );
-}
-
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
@@ -41,15 +34,15 @@ const sendWelcomeEmail = async (to, guestName, uniqueKey) => {
 
 const sendBillEmail = async (to, bookingDetails, bill) => {
   const mailOptions = {
-    from: `"Your Hotel Name" <${process.env.EMAIL_USER}>`,
+    from: `"✨ Platinum Pearl" <${process.env.EMAIL_USER}>`,
     to: to,
-    subject: `Your Bill from Your Hotel Name - Room ${bookingDetails.room.roomNumber}`,
+    subject: `Your Bill from ✨ Platinum Pearl - Room ${bookingDetails.room.roomNumber}`,
     html: `
       <h1>Thank you for staying with us, ${bookingDetails.guestName}!</h1>
       <p>Here is your final bill for your stay in room ${bookingDetails.room.roomNumber}.</p>
       <h2>Bill Details:</h2>
       <ul>
-        ${bill.charges.map(charge => `<li>${charge.item}: $${charge.price.toFixed(2)}</li>`).join('')}
+        ${Object.entries(bill.charges).map(([itemName, data]) => `<li>${itemName} ${data.count > 1 ? `x ${data.count}` : ''} - $${data.total.toFixed(2)}</li>`).join('')}
       </ul>
       <h3>Total: $${bill.total.toFixed(2)}</h3>
       <p>We hope you had a pleasant stay.</p>

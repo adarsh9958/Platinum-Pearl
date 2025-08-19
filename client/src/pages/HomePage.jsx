@@ -110,6 +110,10 @@ const HomePage = () => {
         setSubmittedKey(null);
     };
 
+    const handleRoomSelect = (roomNumber) => {
+        setCheckInData(prev => ({ ...prev, roomNumber: roomNumber.toString() }));
+    };
+
     // --- RENDER LOGIC ---
     let footer = <p>Please select your check-in date.</p>;
     if (range?.from) {
@@ -150,10 +154,36 @@ const HomePage = () => {
                                     {loading ? (
                                         <p>Checking availability...</p>
                                     ) : (
-                                        <div className="room-list">
-                                        {availableRooms.length > 0 ? availableRooms.map(room => (
-                                            <div key={room._id} className="room-item">Room {room.roomNumber}</div>
-                                        )) : <p>Sorry, no rooms are available for the selected dates.</p>}
+                                        <div className="room-list-container">
+                                            {availableRooms.length > 0 ? (
+                                                isMobile ? (
+                                                    <div className="room-list-vertical">
+                                                        {availableRooms.map(room => (
+                                                            <div
+                                                                key={room._id}
+                                                                className={`room-item ${checkInData.roomNumber == room.roomNumber ? 'selected' : ''}`}
+                                                                onClick={() => handleRoomSelect(room.roomNumber)}
+                                                            >
+                                                                Room {room.roomNumber}
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                ) : (
+                                                    <div className="room-list">
+                                                        {availableRooms.map(room => (
+                                                            <div
+                                                                key={room._id}
+                                                                className={`room-item ${checkInData.roomNumber == room.roomNumber ? 'selected' : ''}`}
+                                                                onClick={() => handleRoomSelect(room.roomNumber)}
+                                                            >
+                                                                Room {room.roomNumber}
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                )
+                                            ) : (
+                                                <p>Sorry, no rooms are available for the selected dates.</p>
+                                            )}
                                         </div>
                                     )}
                                 </div>
